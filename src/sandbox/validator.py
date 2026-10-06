@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from src.ai.patch_security_gate import PatchSecurityGate
 from src.core.git_utils import apply_patch_to_file
 from src.core.models import Patch, ValidationResult, ValidationStatus, ValidationStep
 from src.sandbox.runner import SandboxRunner
@@ -19,6 +20,7 @@ class PatchValidator:
 
     def __init__(self, repo_path: Path):
         self.repo_path = repo_path.resolve()
+        self.security_gate = PatchSecurityGate(self.repo_path)
 
     def validate_patch(self, patch: Patch) -> ValidationResult:
         results = self.validate_all_patches([patch])
@@ -32,12 +34,39 @@ class PatchValidator:
         results: list[ValidationResult] = []
 
         for patch in patches:
+            # 1. Evaluate Security Gate
+            sec_decision = self.security_gate.evaluate(patch)
+            if not sec_decision.passed:
+                results.append(
+                    ValidationResult(
+                        patch_id=patch.issue_id,
+                        file_path=patch.file_path,
+                        overall_status=ValidationStatus.FAILED,
+                        syntax_check=False,
+                        import_check=False,
+                        steps=[
+                            ValidationStep(
+                                name="Security Gate Validation",
+                                status=ValidationStatus.FAILED,
+                                details="; ".join(sec_decision.reasons),
+                            )
+                        ],
+                        confidence=0.0,
+                    )
+                )
+                continue
+
             runner = SandboxRunner(self.repo_path)
             try:
                 sandbox_dir = runner.setup_sandbox()
 
                 baseline = runner.run_tests(timeout_sec=30)
                 steps = [
+                    ValidationStep(
+                        name="Security Gate Validation",
+                        status=ValidationStatus.PASSED,
+                        details="AST safety, bounds, and import checks passed.",
+                    ),
                     ValidationStep(
                         name="Baseline Test Execution",
                         status=(
