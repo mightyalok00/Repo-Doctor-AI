@@ -15,8 +15,15 @@ from src.core.models import Issue, Patch
 class PatchGenerator:
     """Generates precise code fixes, dependency resolutions, and configuration patches."""
 
-    def __init__(self, fetcher: RepositoryFetcher):
+    def __init__(self, fetcher: RepositoryFetcher, reasoning_proposals=None):
         self.fetcher = fetcher
+        self.reasoning_proposals = {
+            proposal.issue_id: proposal
+            for proposal in (reasoning_proposals or [])
+            if getattr(proposal, "safe_to_apply", False)
+            and getattr(proposal, "confidence", 0.0) >= 0.85
+            and getattr(proposal, "replacement_code", None)
+        }
 
     def generate_all_patches(self, issues: list[Issue]) -> list[Patch]:
         """Generate patches for all auto-fixable issues."""
@@ -30,8 +37,22 @@ class PatchGenerator:
         return patches
 
     def generate_patch_for_issue(self, issue: Issue) -> Patch | None:
-        """Route to specific patch generator based on issue ID and category."""
+        """Generate an evidence-grounded patch, preferring validated LLM proposals."""
         repo_file = self.fetcher.get_file(issue.file_path)
+
+        proposal = self.reasoning_proposals.get(issue.id)
+        if proposal and repo_file and issue.auto_fixable:
+            replacement = proposal.replacement_code
+            if replacement and replacement != repo_file.content:
+                diff = generate_diff(repo_file.content, replacement, issue.file_path)
+                return Patch(
+                    issue_id=issue.id,
+                    file_path=issue.file_path,
+                    description=f"LLM-assisted repair: {issue.title}. {proposal.root_cause}".strip(),
+                    original_code=repo_file.content,
+                    replacement_code=replacement,
+                    diff=diff,
+                )
 
         # 1. Missing Files (e.g. .gitignore, ci.yml, README, LICENSE, __init__.py)
         if not repo_file or issue.id.startswith("CICD-") or issue.id.startswith("DEPLOY-NO") or issue.id.startswith("DOC-NO") or issue.id.startswith("ARCH-INIT"):
