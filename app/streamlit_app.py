@@ -1,6 +1,6 @@
 """
-RepoDoctor AI - Modern Streamlit Web Dashboard 🩺
-Autonomous Repository Diagnosis, Self-Verifying Repair, and Recruiter-Ready Engineering Reports.
+RepoDoctor AI - Next-Gen Autonomous Repository Engineer Dashboard 🩺
+Ultra-modern Cyberpunk / Glassmorphism UI with Interactive Live Demos & Deep Diagnostics.
 """
 
 from __future__ import annotations
@@ -38,77 +38,220 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom Styling (Dark Glassmorphism, Google Fonts, Vibrant Accents)
+# Custom High-End Cyberpunk / Glassmorphic Design System
 st.markdown(
     """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
-    html, body, [class*="css"] {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    html, body, [class*="css"], .stApp {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background-color: #090d16 !important;
+        color: #f0f6fc;
     }
 
-    code, pre {
+    code, pre, .stCodeBlock {
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Hero Header */
-    .hero-container {
-        background: linear-gradient(135deg, rgba(13, 17, 23, 0.9) 0%, rgba(22, 27, 34, 0.95) 100%);
-        border: 1px solid rgba(88, 166, 255, 0.2);
-        border-radius: 16px;
-        padding: 24px 30px;
+    /* Ambient Glow Background */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: -100px;
+        left: 20%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(56, 139, 253, 0.12) 0%, rgba(0,0,0,0) 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    .stApp::after {
+        content: '';
+        position: fixed;
+        bottom: -100px;
+        right: 15%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(57, 211, 83, 0.08) 0%, rgba(0,0,0,0) 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+        background: linear-gradient(135deg, rgba(16, 22, 36, 0.85) 0%, rgba(13, 17, 28, 0.95) 100%);
+        border: 1px solid rgba(88, 166, 255, 0.25);
+        border-radius: 20px;
+        padding: 32px 36px;
         margin-bottom: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(12px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px);
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 350px;
+        height: 100%;
+        background: radial-gradient(circle at top right, rgba(57, 211, 83, 0.15), rgba(88, 166, 255, 0.05) 50%, transparent 80%);
+        pointer-events: none;
     }
     .hero-title {
-        font-size: 2.4rem;
+        font-size: 2.8rem;
         font-weight: 900;
-        background: linear-gradient(90deg, #58a6ff 0%, #39d353 50%, #bc8cff 100%);
+        background: linear-gradient(90deg, #58a6ff 0%, #39d353 45%, #bc8cff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.03em;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
-    .hero-subtitle {
-        font-size: 1.05rem;
-        color: #8b949e;
-        margin-top: 6px;
+    .hero-tagline {
+        font-size: 1.15rem;
+        color: #94a3b8;
+        margin-top: 10px;
+        max-width: 850px;
+        line-height: 1.5;
         font-weight: 400;
     }
-    .status-pill {
+
+    /* Badges & Chips */
+    .hero-badge-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+    }
+    .tech-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(56, 139, 253, 0.12);
-        border: 1px solid rgba(56, 139, 253, 0.35);
-        border-radius: 20px;
-        padding: 4px 12px;
-        font-size: 0.8rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(88, 166, 255, 0.25);
+        border-radius: 9999px;
+        padding: 5px 14px;
+        font-size: 0.82rem;
         font-weight: 600;
-        color: #58a6ff;
-        margin-top: 10px;
+        color: #93c5fd;
+        backdrop-filter: blur(8px);
+        transition: all 0.2s ease;
+    }
+    .tech-badge:hover {
+        border-color: #58a6ff;
+        background: rgba(56, 139, 253, 0.18);
+        transform: translateY(-1px);
+    }
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #39d353;
+        box-shadow: 0 0 10px #39d353;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(57, 211, 83, 0.7); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(57, 211, 83, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(57, 211, 83, 0); }
     }
 
-    /* Metric Cards */
-    .metric-card {
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.09);
+    /* Interactive Demo Repo Cards */
+    .demo-card {
+        background: linear-gradient(145deg, rgba(22, 27, 34, 0.8) 0%, rgba(13, 17, 23, 0.95) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 22px;
+        height: 100%;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .demo-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(88, 166, 255, 0.5);
+        box-shadow: 0 12px 30px rgba(56, 139, 253, 0.15);
+    }
+    .demo-header {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #f0f6fc;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .demo-desc {
+        font-size: 0.88rem;
+        color: #8b949e;
+        line-height: 1.45;
+        margin-bottom: 14px;
+        flex-grow: 1;
+    }
+    .demo-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    .demo-tag {
+        font-size: 0.72rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .tag-red { background: rgba(248, 81, 73, 0.15); color: #ff7b72; border: 1px solid rgba(248, 81, 73, 0.3); }
+    .tag-amber { background: rgba(210, 153, 34, 0.15); color: #f0883e; border: 1px solid rgba(210, 153, 34, 0.3); }
+    .tag-green { background: rgba(57, 211, 83, 0.15); color: #39d353; border: 1px solid rgba(57, 211, 83, 0.3); }
+    .tag-blue { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
+
+    /* Feature Grid Boxes */
+    .feature-box {
+        background: rgba(18, 24, 38, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 14px;
-        padding: 18px 14px;
+        padding: 20px;
+        margin-bottom: 16px;
+        backdrop-filter: blur(10px);
+    }
+    .feature-box-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #58a6ff;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Metric Dashboard Cards */
+    .metric-card {
+        background: linear-gradient(145deg, rgba(22, 27, 38, 0.9) 0%, rgba(14, 18, 26, 0.95) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px 14px;
         text-align: center;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+        position: relative;
+        overflow: hidden;
     }
     .metric-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(88, 166, 255, 0.4);
-        box-shadow: 0 8px 25px rgba(88, 166, 255, 0.15);
+        border-color: rgba(88, 166, 255, 0.45);
+        box-shadow: 0 10px 30px rgba(56, 139, 253, 0.2);
     }
     .metric-num {
-        font-size: 2.3rem;
-        font-weight: 800;
+        font-size: 2.4rem;
+        font-weight: 900;
         line-height: 1.1;
         letter-spacing: -0.03em;
     }
@@ -116,106 +259,110 @@ st.markdown(
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #8b949e;
+        color: #94a3b8;
         margin-top: 6px;
-        font-weight: 600;
-    }
-
-    /* Badges */
-    .badge {
-        display: inline-block;
-        padding: 3px 9px;
-        border-radius: 6px;
-        font-size: 0.75rem;
         font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-    }
-    .badge-critical {
-        background-color: rgba(248, 81, 73, 0.18);
-        color: #ff7b72;
-        border: 1px solid rgba(248, 81, 73, 0.4);
-    }
-    .badge-high {
-        background-color: rgba(210, 153, 34, 0.18);
-        color: #f0883e;
-        border: 1px solid rgba(210, 153, 34, 0.4);
-    }
-    .badge-medium {
-        background-color: rgba(227, 179, 65, 0.18);
-        color: #e3b341;
-        border: 1px solid rgba(227, 179, 65, 0.4);
-    }
-    .badge-low {
-        background-color: rgba(88, 166, 255, 0.18);
-        color: #58a6ff;
-        border: 1px solid rgba(88, 166, 255, 0.4);
-    }
-    .badge-passed {
-        background-color: rgba(63, 185, 80, 0.18);
-        color: #3fb950;
-        border: 1px solid rgba(63, 185, 80, 0.4);
     }
 
-    /* Findings Cards */
-    .finding-card {
-        background: rgba(22, 27, 34, 0.7);
-        border: 1px solid rgba(48, 54, 61, 0.9);
-        border-radius: 12px;
-        padding: 18px 20px;
-        margin-bottom: 14px;
-        transition: all 0.2s ease;
+    /* Action Search Bar */
+    .search-wrapper {
+        background: rgba(16, 22, 34, 0.9);
+        border: 1px solid rgba(88, 166, 255, 0.3);
+        border-radius: 14px;
+        padding: 6px 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        margin-bottom: 24px;
     }
-    .finding-card:hover {
-        border-color: rgba(88, 166, 255, 0.35);
-        background: rgba(22, 27, 34, 0.95);
+
+    /* Streamlit Button Tweaks */
+    div.stButton > button {
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.02em !important;
+        transition: all 0.2s ease !important;
     }
-    .finding-header {
+    div.stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #238636 0%, #2ea043 100%) !important;
+        border: 1px solid #3fb950 !important;
+        box-shadow: 0 4px 15px rgba(46, 160, 67, 0.35) !important;
+        color: #ffffff !important;
+    }
+    div.stButton > button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #2ea043 0%, #3fb950 100%) !important;
+        box-shadow: 0 6px 22px rgba(46, 160, 67, 0.5) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    /* Pipeline Diagram Nodes */
+    .pipeline-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 8px;
+        background: rgba(13, 17, 24, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        gap: 12px;
     }
-    .finding-title {
-        font-size: 1.08rem;
+    .pipeline-node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-width: 110px;
+    }
+    .node-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        background: rgba(30, 41, 59, 0.9);
+        border: 2px solid #58a6ff;
+        box-shadow: 0 0 12px rgba(88, 166, 255, 0.25);
+        margin-bottom: 6px;
+    }
+    .node-text {
+        font-size: 0.78rem;
         font-weight: 700;
-        color: #f0f6fc;
+        color: #cbd5e1;
     }
-    .finding-meta {
-        font-size: 0.85rem;
-        color: #8b949e;
-        margin-bottom: 10px;
-    }
-    .finding-risk {
-        font-size: 0.92rem;
-        color: #c9d1d9;
-        margin-bottom: 8px;
-        line-height: 1.45;
-    }
-    .finding-rec {
-        font-size: 0.92rem;
-        color: #3fb950;
-        font-weight: 500;
-        line-height: 1.45;
-    }
-    .reasoning-box {
-        background: rgba(188, 140, 255, 0.08);
-        border: 1px solid rgba(188, 140, 255, 0.25);
-        border-radius: 8px;
-        padding: 12px 14px;
-        margin-top: 10px;
-        color: #d2a8ff;
-        font-size: 0.88rem;
+    .node-arrow {
+        color: #64748b;
+        font-size: 1.2rem;
+        font-weight: 700;
     }
 
-    /* ML Doctor Cards */
-    .ml-leak-card {
-        background: linear-gradient(135deg, rgba(248, 81, 73, 0.08) 0%, rgba(22, 27, 34, 0.8) 100%);
-        border: 1px solid rgba(248, 81, 73, 0.3);
-        border-radius: 12px;
-        padding: 18px;
+    /* Finding Card */
+    .finding-card {
+        background: linear-gradient(145deg, rgba(22, 27, 38, 0.8) 0%, rgba(15, 20, 29, 0.95) 100%);
+        border: 1px solid rgba(48, 54, 61, 0.9);
+        border-radius: 14px;
+        padding: 20px 22px;
         margin-bottom: 16px;
+        transition: all 0.2s ease;
     }
+    .finding-card:hover {
+        border-color: rgba(88, 166, 255, 0.45);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    .badge-critical { background: rgba(248, 81, 73, 0.2); color: #ff7b72; border: 1px solid rgba(248, 81, 73, 0.45); }
+    .badge-high { background: rgba(210, 153, 34, 0.2); color: #f0883e; border: 1px solid rgba(210, 153, 34, 0.45); }
+    .badge-medium { background: rgba(227, 179, 65, 0.2); color: #e3b341; border: 1px solid rgba(227, 179, 65, 0.45); }
+    .badge-low { background: rgba(88, 166, 255, 0.2); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.45); }
 </style>
 """,
     unsafe_allow_html=True,
@@ -232,26 +379,69 @@ if "target_repo" not in st.session_state:
     st.session_state.target_repo = "examples/buggy_ml_repo"
 if "llm_proposals" not in st.session_state:
     st.session_state.llm_proposals = {}
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = 0
 
 history_store = HealthTimelineStore()
 
-# ----------------- Hero Section -----------------
+# ----------------- Hero Banner -----------------
 st.markdown(
     """
-<div class="hero-container">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-        <div>
-            <h1 class="hero-title">🩺 RepoDoctor AI</h1>
-            <div class="hero-subtitle">
-                Autonomous Engineer: Deep AST Diagnostics • ML Doctor™ Integrity • Self-Verifying Sandbox Repairs
-            </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
-                <span class="status-pill">🛡️ AST Deterministic Source of Truth</span>
-                <span class="status-pill">🧪 ML Leakage Guard</span>
-                <span class="status-pill">⚙️ Disposable Sandbox Verification</span>
-                <span class="status-pill">🤖 OpenRouter Reasoning Enabled</span>
-            </div>
-        </div>
+<div class="hero-banner">
+    <h1 class="hero-title">🩺 RepoDoctor AI</h1>
+    <div class="hero-tagline">
+        Autonomous Software Engineer that audits AST architecture, detects data leakage in ML pipelines,
+        proposes evidence-grounded repairs, and self-verifies fixes in a disposable sandbox with real pytest runs.
+    </div>
+    <div class="hero-badge-container">
+        <span class="tech-badge"><span class="pulse-dot"></span> Live Engine Ready</span>
+        <span class="tech-badge">🔍 AST 8-Dimension Rubric</span>
+        <span class="tech-badge">🧪 ML Doctor™ Leakage Detector</span>
+        <span class="tech-badge">⚙️ Pre & Post Sandbox Pytest Verification</span>
+        <span class="tech-badge">🤖 OpenRouter Reasoning Active</span>
+    </div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
+# ----------------- Interactive Self-Verifying Pipeline Flowchart -----------------
+st.markdown(
+    """
+<div class="pipeline-container">
+    <div class="pipeline-node">
+        <div class="node-circle">📥</div>
+        <div class="node-text">1. Ingest Repo</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="pipeline-node">
+        <div class="node-circle" style="border-color: #bc8cff;">🧠</div>
+        <div class="node-text">2. AST Analyzers</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="pipeline-node">
+        <div class="node-circle" style="border-color: #ff7b72;">🧪</div>
+        <div class="node-text">3. ML Doctor™</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="pipeline-node">
+        <div class="node-circle" style="border-color: #f0883e;">🤖</div>
+        <div class="node-text">4. LLM Reasoner</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="pipeline-node">
+        <div class="node-circle" style="border-color: #58a6ff;">⚙️</div>
+        <div class="node-text">5. Sandbox Baseline</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="pipeline-node">
+        <div class="node-circle" style="border-color: #39d353;">🔧</div>
+        <div class="node-text">6. Patch & Re-Test</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="pipeline-node">
+        <div class="node-circle" style="border-color: #39d353; box-shadow: 0 0 15px #39d353;">✅</div>
+        <div class="node-text">7. Verified Fix</div>
     </div>
 </div>
 """,
@@ -261,21 +451,11 @@ st.markdown(
 # ----------------- Sidebar Configuration -----------------
 with st.sidebar:
     st.markdown("### ⚙️ Target Repository")
-    repo_input = st.text_input(
+    sidebar_target = st.text_input(
         "GitHub URL or Local Path:",
         value=st.session_state.target_repo,
-        help="Specify a GitHub repo URL (e.g. mightyalok00/Repo-Doctor-AI) or a local path.",
+        help="Specify a GitHub repo URL (e.g. mightyalok00/Repo-Doctor-AI) or local folder.",
     )
-
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        if st.button("📦 Load Demo", use_container_width=True):
-            st.session_state.target_repo = "examples/buggy_ml_repo"
-            st.rerun()
-    with col_btn2:
-        if st.button("📁 Load Self", use_container_width=True):
-            st.session_state.target_repo = str(root_dir)
-            st.rerun()
 
     st.markdown("---")
     st.markdown("### 🤖 AI Reasoning Engine (LLM)")
@@ -304,25 +484,25 @@ with st.sidebar:
         "API Key",
         value=os.getenv("REPO_DOCTOR_LLM_API_KEY", ""),
         type="password",
-        help="API Key for OpenRouter / Remote Gateway. Automatically loaded from .env if present.",
+        help="API Key for OpenRouter. Automatically loaded from .env if present.",
     )
 
     st.markdown("---")
-    st.markdown("### 🛠️ Execution & Sandbox Options")
+    st.markdown("### 🛠️ Verification Sandbox")
     auto_sandbox = st.checkbox("Execute Disposable Sandbox Verification", value=True)
-    pytest_timeout = st.slider("Pytest Validation Timeout (sec)", min_value=10, max_value=120, value=30, step=5)
+    pytest_timeout = st.slider("Pytest Timeout (sec)", min_value=10, max_value=120, value=30, step=5)
 
 
 # ----------------- Execution Logic -----------------
 def execute_diagnosis(target_path: str):
-    progress_bar = st.progress(0, text="Initializing repository fetcher...")
+    progress_bar = st.progress(0, text="Fetching repository structure...")
     fetcher = RepositoryFetcher(target_path)
 
     try:
-        progress_bar.progress(15, text="Fetching and cloning repository files...")
+        progress_bar.progress(15, text="Parsing AST trees & file hierarchy...")
         fetcher.fetch()
 
-        progress_bar.progress(35, text="Running AST & static analyzers across 8 dimensions...")
+        progress_bar.progress(35, text="Running 8-dimension AST analyzers & ML Doctor...")
         engine = DiagnosisEngine(fetcher)
         diagnosis = engine.run_full_diagnosis()
 
@@ -341,20 +521,20 @@ def execute_diagnosis(target_path: str):
                 if res.proposals:
                     llm_proposals_map = {p.issue_id: p for p in res.proposals}
             except Exception as llm_err:
-                st.warning(f"LLM Reasoning skipped: {str(llm_err)}")
+                st.warning(f"LLM Reasoning note: {str(llm_err)}")
 
-        progress_bar.progress(70, text="Generating autonomous self-verifying AST patches...")
+        progress_bar.progress(70, text="Generating autonomous unified AST patches...")
         patch_gen = PatchGenerator(fetcher)
         patches = patch_gen.generate_all_patches(diagnosis.issues)
 
         val_results = []
         if auto_sandbox and patches:
-            progress_bar.progress(85, text="Running disposable sandbox pre vs post test validations...")
+            progress_bar.progress(85, text="Executing disposable validation workspace tests...")
             validator = PatchValidator(fetcher.repo_path)
             val_results = validator.validate_all_patches(patches)
 
         # Record timeline snapshot
-        progress_bar.progress(95, text="Persisting timeline snapshot...")
+        progress_bar.progress(95, text="Recording health timeline snapshot...")
         history_store.record_snapshot(
             repo_identifier=diagnosis.repo_name,
             overall_score=diagnosis.scorecard.overall_score,
@@ -380,20 +560,134 @@ def execute_diagnosis(target_path: str):
         st.code(traceback.format_exc(), language="text")
 
 
-# Main Input Bar
-c_input, c_btn = st.columns([4, 1.2])
+# ----------------- Main Input Searchbar -----------------
+c_input, c_btn = st.columns([4, 1.4])
 with c_input:
     active_target = st.text_input(
         "Repository Target",
         value=st.session_state.target_repo,
         label_visibility="collapsed",
-        placeholder="Enter GitHub URL or relative/absolute local path...",
+        placeholder="Enter GitHub URL (e.g. mightyalok00/Repo-Doctor-AI) or local directory...",
     )
 with c_btn:
     if st.button("🚀 Diagnose & Verify", type="primary", use_container_width=True):
         execute_diagnosis(active_target)
 
-# ----------------- Results Dashboard -----------------
+# ----------------- Landing Experience (If No Active Scan Yet) -----------------
+if not st.session_state.diagnosis:
+    st.markdown("### 🎯 Quick-Start: 1-Click Demo Repositories")
+    st.markdown("Select a sample repository to immediately experience autonomous diagnosis, ML leakage detection, and self-verifying repair:")
+
+    col_d1, col_d2, col_d3 = st.columns(3)
+
+    with col_d1:
+        st.markdown(
+            """
+        <div class="demo-card">
+            <div>
+                <div class="demo-header">🧪 Buggy ML Pipeline</div>
+                <div class="demo-desc">
+                    Contains classic ML anti-patterns: <strong>Data leakage</strong> via pre-split scaler fitting,
+                    unstratified train-test splits, non-deterministic random state, and security <code>eval()</code> calls.
+                </div>
+                <div class="demo-tags">
+                    <span class="demo-tag tag-red">Data Leakage</span>
+                    <span class="demo-tag tag-amber">Eval RCE</span>
+                    <span class="demo-tag tag-blue">Scikit-Learn</span>
+                </div>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+        if st.button("⚡ Scan Buggy ML Repo", use_container_width=True, key="scan_demo_1"):
+            st.session_state.target_repo = "examples/buggy_ml_repo"
+            execute_diagnosis("examples/buggy_ml_repo")
+            st.rerun()
+
+    with col_d2:
+        st.markdown(
+            f"""
+        <div class="demo-card">
+            <div>
+                <div class="demo-header">🩺 RepoDoctor AI (Self-Audit)</div>
+                <div class="demo-desc">
+                    Run an autonomous self-audit on this entire codebase ({len(os.listdir(root_dir))} modules).
+                    Evaluates modular architecture, AST test coverage, docstrings, and reproducibility.
+                </div>
+                <div class="demo-tags">
+                    <span class="demo-tag tag-green">Clean Architecture</span>
+                    <span class="demo-tag tag-blue">FastAPI</span>
+                    <span class="demo-tag tag-amber">Streamlit</span>
+                </div>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+        if st.button("⚡ Self-Audit RepoDoctor", use_container_width=True, key="scan_demo_2"):
+            st.session_state.target_repo = str(root_dir)
+            execute_diagnosis(str(root_dir))
+            st.rerun()
+
+    with col_d3:
+        st.markdown(
+            """
+        <div class="demo-card">
+            <div>
+                <div class="demo-header">🌐 Remote GitHub Repository</div>
+                <div class="demo-desc">
+                    Diagnose any public repository on GitHub. Automatically clones, maps AST hierarchies,
+                    scores dimensions, and verifies fixes in temporary memory.
+                </div>
+                <div class="demo-tags">
+                    <span class="demo-tag tag-blue">GitHub Clone</span>
+                    <span class="demo-tag tag-green">Automated Diff</span>
+                    <span class="demo-tag tag-amber">Recruiter Report</span>
+                </div>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+        if st.button("⚡ Scan Remote GitHub", use_container_width=True, key="scan_demo_3"):
+            execute_diagnosis("https://github.com/mightyalok00/Repo-Doctor-AI")
+            st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Interactive Feature Showcase Preview
+    st.markdown("### 🌟 What RepoDoctor AI Does Autonomously")
+    f1, f2 = st.columns(2)
+    with f1:
+        st.markdown(
+            """
+        <div class="feature-box">
+            <div class="feature-box-title">🔬 AST Data Leakage & ML Pipeline Guard</div>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
+                Unlike generic linters, RepoDoctor parses Python AST to trace feature transformers.
+                It detects whether <code>StandardScaler.fit_transform</code> was called before <code>train_test_split</code>,
+                and rewrites the code to fit strictly on the training partition.
+            </p>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+    with f2:
+        st.markdown(
+            """
+        <div class="feature-box">
+            <div class="feature-box-title">⚙️ Disposable Workspace Self-Verification</div>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
+                Every proposed fix is tested in a temporary sandbox. Baseline test results are compared with post-patch test runs.
+                Patches are only marked <strong>Verified</strong> if test passing rates increase without regressions.
+            </p>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+# ----------------- Results Dashboard (When Repo is Scanned) -----------------
 if st.session_state.diagnosis:
     diag = st.session_state.diagnosis
     sc = diag.scorecard
@@ -403,7 +697,7 @@ if st.session_state.diagnosis:
 
     # Top KPI Metrics Row
     m1, m2, m3, m4, m5, m6 = st.columns(6)
-    score_color = "#3fb950" if sc.overall_score >= 8.5 else "#d29922" if sc.overall_score >= 6.5 else "#ff7b72"
+    score_color = "#39d353" if sc.overall_score >= 8.5 else "#d29922" if sc.overall_score >= 6.5 else "#ff7b72"
     with m1:
         st.markdown(
             f"""
@@ -448,7 +742,7 @@ if st.session_state.diagnosis:
         st.markdown(
             f"""
         <div class="metric-card">
-            <div class="metric-num" style="color: #3fb950;">{len(st.session_state.patches)}</div>
+            <div class="metric-num" style="color: #39d353;">{len(st.session_state.patches)}</div>
             <div class="metric-title">Auto-Patches</div>
         </div>
         """,
@@ -459,7 +753,7 @@ if st.session_state.diagnosis:
             1 for vr in st.session_state.val_results if vr.overall_status == ValidationStatus.PASSED
         )
         total_val = len(st.session_state.val_results)
-        v_color = "#3fb950" if verified_count == total_val and total_val > 0 else "#58a6ff"
+        v_color = "#39d353" if verified_count == total_val and total_val > 0 else "#58a6ff"
         st.markdown(
             f"""
         <div class="metric-card">
@@ -577,17 +871,17 @@ if st.session_state.diagnosis:
             st.markdown(
                 f"""
             <div class="finding-card">
-                <div class="finding-header">
-                    <span class="finding-title">{issue.title}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 1.1rem; font-weight: 700; color: #f0f6fc;">{issue.title}</span>
                     <span class="badge {s_badge}">[{issue.severity.value}]</span>
                 </div>
-                <div class="finding-meta">
+                <div style="color: #8b949e; font-size: 0.85rem; margin-bottom: 10px;">
                     📁 <code>{issue.file_path}:{issue.line_number or 1}</code> | Category: <strong>{issue.category.value}</strong> | Confidence: <strong>{int(issue.confidence * 100)}%</strong>
                 </div>
-                <div class="finding-risk">
+                <div style="color: #cbd5e1; font-size: 0.92rem; margin-bottom: 8px;">
                     <strong>⚠️ Risk Analysis:</strong> {issue.risk_explanation}
                 </div>
-                <div class="finding-rec">
+                <div style="color: #39d353; font-size: 0.92rem; font-weight: 500;">
                     <strong>💡 Recommendation:</strong> {issue.recommendation}
                 </div>
             </div>
@@ -601,7 +895,7 @@ if st.session_state.diagnosis:
                 if proposal.root_cause or proposal.rationale:
                     st.markdown(
                         f"""
-                    <div class="reasoning-box">
+                    <div style="background: rgba(188, 140, 255, 0.08); border: 1px solid rgba(188, 140, 255, 0.25); border-radius: 8px; padding: 12px 14px; margin-top: -6px; margin-bottom: 14px; color: #d2a8ff; font-size: 0.88rem;">
                         <strong>🧠 AI Reasoning Root-Cause:</strong> {proposal.root_cause}<br>
                         <strong>📐 Architectural Rationale:</strong> {proposal.rationale}
                     </div>
@@ -625,7 +919,7 @@ if st.session_state.diagnosis:
             for issue in ml_findings:
                 st.markdown(
                     f"""
-                <div class="ml-leak-card">
+                <div style="background: linear-gradient(135deg, rgba(248, 81, 73, 0.08) 0%, rgba(22, 27, 34, 0.8) 100%); border: 1px solid rgba(248, 81, 73, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="font-size: 1.15rem; font-weight: 700; color: #ff7b72;">🚨 {issue.title}</span>
                         <span class="badge badge-critical">[{issue.severity.value}]</span>
@@ -636,7 +930,7 @@ if st.session_state.diagnosis:
                     <div style="color: #f0f6fc; margin-bottom: 6px;">
                         <strong>Root Cause & Contamination Risk:</strong> {issue.risk_explanation}
                     </div>
-                    <div style="color: #3fb950; margin-bottom: 10px;">
+                    <div style="color: #39d353; margin-bottom: 10px;">
                         <strong>Autonomous Repair Action:</strong> {issue.recommendation}
                     </div>
                 </div>
@@ -797,6 +1091,3 @@ if st.session_state.diagnosis:
         st.markdown("---")
         st.markdown("#### 📄 Report Preview")
         st.markdown(report_md)
-
-else:
-    st.info("👈 Enter a GitHub URL or click **'Load Demo'** above to run an autonomous diagnosis!")
