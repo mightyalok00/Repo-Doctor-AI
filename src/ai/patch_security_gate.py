@@ -7,9 +7,7 @@ Ensures no malicious code, unwanted imports, path traversals, or oversized hallu
 from __future__ import annotations
 
 import ast
-import os
 from pathlib import Path
-from typing import NamedTuple
 
 from pydantic import BaseModel, Field
 

@@ -4,11 +4,10 @@ Provides RESTful APIs for autonomous repository scanning, diagnosis, repair, and
 """
 
 from __future__ import annotations
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
-from pathlib import Path
 
 from src.core.fetcher import RepositoryFetcher
 from src.ai.diagnosis import DiagnosisEngine
@@ -16,7 +15,7 @@ from src.ai.patch_generator import PatchGenerator
 from src.sandbox.validator import PatchValidator
 from src.core.history_store import HealthTimelineStore
 from src.report.generator import ReportGenerator
-from src.core.models import RepositoryDiagnosis, Patch, ValidationResult, TimelineEntry
+from src.core.models import RepositoryDiagnosis, TimelineEntry
 from src.core.git_utils import apply_patch_to_file
 
 app = FastAPI(
@@ -65,7 +64,7 @@ def scan_repository(req: ScanRequest):
         diagnosis = engine.run_full_diagnosis()
 
         # Record timeline
-        entry = history_store.record_snapshot(
+        history_store.record_snapshot(
             repo_identifier=diagnosis.repo_name,
             overall_score=diagnosis.scorecard.overall_score,
             category_scores=diagnosis.scorecard.category_scores,

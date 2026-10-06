@@ -5,10 +5,8 @@ Ultra-modern Cyberpunk / Glassmorphism UI with Interactive Live Demos & Deep Dia
 
 from __future__ import annotations
 
-import json
 import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 # Add project root to sys.path
@@ -16,7 +14,6 @@ root_dir = Path(__file__).resolve().parent.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 
-import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 

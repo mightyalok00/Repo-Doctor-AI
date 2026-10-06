@@ -2,7 +2,6 @@
 Tests for DockerSandboxRunner isolation and fallback.
 """
 
-from pathlib import Path
 from src.sandbox.docker_runner import DockerSandboxRunner
 
 
@@ -19,7 +18,7 @@ def test_docker_runner_setup_and_cleanup():
 
 def test_docker_runner_test_execution_fallback():
     runner = DockerSandboxRunner(source_repo_path="examples/buggy_ml_repo")
-    sandbox_path = runner.setup_sandbox()
+    runner.setup_sandbox()
 
     res = runner.run_tests(timeout_sec=15)
     assert "passed" in res

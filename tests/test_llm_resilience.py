@@ -2,12 +2,12 @@
 Tests for LLM Reasoning Engine resilience and response parsing.
 """
 
-from unittest.mock import MagicMock, patch
 import json
+from unittest.mock import MagicMock, patch
 import pytest
 
-from src.ai.reasoning import LLMReasoningEngine, RepairProposal, LLMReasoningResult
-from src.core.models import Issue, Category, Severity
+from src.ai.reasoning import LLMReasoningEngine
+from src.core.models import Category, Issue, Severity
 
 
 @pytest.fixture

@@ -170,7 +170,6 @@ class PatchGenerator:
         if match:
             indent = match.group(1)
             scaler_inst = match.group(2)
-            var_x = match.group(3)
             split_vars = match.group(5)
             split_args = match.group(6)
 

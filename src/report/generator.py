@@ -98,7 +98,6 @@ class ReportGenerator:
         """Generate standalone styled HTML report."""
         d = self.diagnosis
         sc = d.scorecard
-        md_content = self.generate_markdown()
 
         # Build clean modern HTML template
         html = f"""<!DOCTYPE html>

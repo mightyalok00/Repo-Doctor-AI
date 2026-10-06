@@ -71,7 +71,7 @@ class DeploymentAnalyzer:
                         severity=Severity.MEDIUM,
                         file_path="Dockerfile",
                         line_number=1,
-                        code_snippet=[l for l in dockerfile.lines if "FROM" in l][0] if dockerfile.lines else "",
+                        code_snippet=[line for line in dockerfile.lines if "FROM" in line][0] if dockerfile.lines else "",
                         risk_explanation="Using `FROM python:latest` creates non-deterministic Docker builds that can unexpectedly break when base image dependencies change upstream.",
                         recommendation="Pin an explicit base image tag, e.g. `FROM python:3.11-slim-bookworm`.",
                         confidence=0.96,
