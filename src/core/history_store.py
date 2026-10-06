@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from src.core.models import TimelineEntry
@@ -59,7 +59,7 @@ class HealthTimelineStore:
         next_ver_num = len(history) + 1
         version_str = f"v{next_ver_num}"
 
-        now_str = datetime.utcnow().isoformat()
+        now_str = datetime.now(timezone.utc).isoformat()
         cat_json = json.dumps(category_scores)
 
         if not description:

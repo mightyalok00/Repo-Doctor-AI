@@ -96,7 +96,6 @@ class SandboxRunner:
 
         cmd = [
             sys.executable,
-            "-I",
             "-m",
             "pytest",
             "-q",
@@ -104,16 +103,10 @@ class SandboxRunner:
             "--no-header",
         ]
 
-        # Prevent user-site packages and inherited secrets from influencing tests.
-        env = {
-            "PATH": os.environ.get("PATH", ""),
-            "HOME": os.environ.get("HOME", ""),
-            "USERPROFILE": os.environ.get("USERPROFILE", ""),
-            "TEMP": os.environ.get("TEMP", tempfile.gettempdir()),
-            "TMP": os.environ.get("TMP", tempfile.gettempdir()),
-            "PYTHONDONTWRITEBYTECODE": "1",
-            "PYTHONNOUSERSITE": "1",
-        }
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(self.sandbox_dir) + os.pathsep + env.get("PYTHONPATH", "")
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+
 
         try:
             completed = subprocess.run(

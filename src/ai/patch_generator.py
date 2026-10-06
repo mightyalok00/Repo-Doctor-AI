@@ -262,9 +262,10 @@ class PatchGenerator:
             m = re.search(r"([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(\[\]|\{\}|set\(\))", line)
             if m:
                 arg_name = m.group(1)
+                default_expr = m.group(2)
                 repaired_def = line.replace(m.group(0), f"{arg_name}=None")
                 indent = len(line) - len(line.lstrip()) + 4
-                body_init = f"{' ' * indent}if {arg_name} is None:\n{' ' * indent}    {arg_name} = []"
+                body_init = f"{' ' * indent}if {arg_name} is None:\n{' ' * indent}    {arg_name} = {default_expr}"
                 lines[line_num - 1] = repaired_def
                 lines.insert(line_num, body_init)
                 return "\n".join(lines) + "\n"

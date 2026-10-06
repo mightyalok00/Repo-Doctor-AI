@@ -4,7 +4,7 @@ RepoDoctor AI - Core Data Models and Schemas
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
@@ -107,7 +107,7 @@ class RepositoryScorecard(BaseModel):
 
 class TimelineEntry(BaseModel):
     version: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     overall_score: float
     category_scores: dict[str, float]
     total_issues: int
@@ -118,7 +118,7 @@ class TimelineEntry(BaseModel):
 class RepositoryDiagnosis(BaseModel):
     repo_name: str
     repo_path: str
-    scan_timestamp: datetime = Field(default_factory=datetime.utcnow)
+    scan_timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     total_files: int = 0
     python_files: int = 0
     total_loc: int = 0

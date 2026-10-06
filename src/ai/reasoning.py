@@ -34,6 +34,23 @@ class LLMReasoningResult(BaseModel):
     error: str | None = None
 
 
+def _load_env_file() -> None:
+    """Lightweight .env loader without external dependencies."""
+    for candidate in [".env", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")]:
+        if os.path.isfile(candidate):
+            try:
+                with open(candidate, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            k, v = k.strip(), v.strip().strip("'\"")
+                            if k not in os.environ:
+                                os.environ[k] = v
+            except Exception:
+                pass
+
+
 class LLMReasoningEngine:
     """Calls an OpenAI-compatible chat-completions endpoint.
 
@@ -48,6 +65,7 @@ class LLMReasoningEngine:
         model: str | None = None,
         timeout_sec: int = 45,
     ) -> None:
+        _load_env_file()
         self.base_url = (
             base_url
             or os.getenv("REPO_DOCTOR_LLM_BASE_URL")
