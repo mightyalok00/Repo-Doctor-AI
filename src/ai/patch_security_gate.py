@@ -92,7 +92,7 @@ class PatchSecurityGate:
         # 3. AST Syntax & Static Security Analysis (For Python files)
         if patch.file_path.endswith(".py") and patch.replacement_code:
             try:
-                tree = ast.parse(patch.replacement_code, filename=patch.file_path)
+                ast.parse(patch.replacement_code, filename=patch.file_path)
             except SyntaxError as syn_err:
                 reasons.append(f"Security Gate Blocked: Replacement code has invalid Python syntax ({syn_err}).")
                 return SecurityGateDecision(
@@ -101,32 +101,17 @@ class PatchSecurityGate:
                     diff_line_change=line_delta,
                 )
 
-            # Analyze AST nodes for forbidden imports and dangerous functions
-            for node in ast.walk(tree):
-                # Check import foo
-                if isinstance(node, ast.Import):
-                    for alias in node.names:
-                        base_mod = alias.name.split(".")[0]
-                        if base_mod in self.FORBIDDEN_MODULES:
-                            blocked_imports.append(alias.name)
-                            ast_vulns.append(f"Forbidden security module imported: '{alias.name}'")
+            orig_imports, orig_calls = self._extract_security_features(patch.original_code, patch.file_path)
+            new_imports, new_calls = self._extract_security_features(patch.replacement_code, patch.file_path)
 
-                # Check from foo import bar
-                elif isinstance(node, ast.ImportFrom):
-                    if node.module:
-                        base_mod = node.module.split(".")[0]
-                        if base_mod in self.FORBIDDEN_MODULES:
-                            blocked_imports.append(node.module)
-                            ast_vulns.append(f"Forbidden security module imported from: '{node.module}'")
+            introduced_imports = (new_imports - orig_imports) & self.FORBIDDEN_MODULES
+            for mod in introduced_imports:
+                blocked_imports.append(mod)
+                ast_vulns.append(f"Forbidden security module introduced by patch: '{mod}'")
 
-                # Check dangerous function calls
-                elif isinstance(node, ast.Call):
-                    if isinstance(node.func, ast.Name) and node.func.id in self.FORBIDDEN_CALLS:
-                        ast_vulns.append(f"Dangerous call '{node.func.id}()' in replacement code.")
-                    elif isinstance(node.func, ast.Attribute):
-                        # Detect os.system, os.popen
-                        if isinstance(node.func.value, ast.Name) and node.func.value.id == "os" and node.func.attr in {"system", "popen", "spawn"}:
-                            ast_vulns.append(f"Dangerous call 'os.{node.func.attr}()' in replacement code.")
+            introduced_calls = new_calls - orig_calls
+            for call in introduced_calls:
+                ast_vulns.append(f"Dangerous call introduced by patch: '{call}()'")
 
         if ast_vulns:
             reasons.extend(ast_vulns)
@@ -139,3 +124,35 @@ class PatchSecurityGate:
             ast_vulnerabilities=ast_vulns,
             diff_line_change=line_delta,
         )
+
+    def _extract_security_features(self, code: str, file_path: str) -> tuple[set[str], set[str]]:
+        """Extract imported modules and dangerous calls from code."""
+        imports: set[str] = set()
+        calls: set[str] = set()
+        if not code or not file_path.endswith(".py"):
+            return imports, calls
+
+        try:
+            tree = ast.parse(code, filename=file_path)
+        except Exception:
+            return imports, calls
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    imports.add(alias.name.split(".")[0])
+            elif isinstance(node, ast.ImportFrom):
+                if node.module:
+                    imports.add(node.module.split(".")[0])
+            elif isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name) and node.func.id in self.FORBIDDEN_CALLS:
+                    calls.add(node.func.id)
+                elif isinstance(node.func, ast.Attribute):
+                    if (
+                        isinstance(node.func.value, ast.Name)
+                        and node.func.value.id == "os"
+                        and node.func.attr in {"system", "popen", "spawn"}
+                    ):
+                        calls.add(f"os.{node.func.attr}")
+        return imports, calls
+
