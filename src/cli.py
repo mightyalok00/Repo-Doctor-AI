@@ -26,6 +26,7 @@ console = Console(force_terminal=True, legacy_windows=False)
 
 from src.ai.diagnosis import DiagnosisEngine
 from src.ai.patch_generator import PatchGenerator
+from src.ai.reasoning import LLMReasoningEngine
 from src.core.fetcher import RepositoryFetcher
 from src.core.git_utils import apply_patch_to_file
 from src.core.history_store import HealthTimelineStore
@@ -116,7 +117,16 @@ def fix_command(target: str, apply_fixes: bool = False):
     engine = DiagnosisEngine(fetcher)
     diagnosis = engine.run_full_diagnosis()
 
-    patch_gen = PatchGenerator(fetcher)
+    reasoning = LLMReasoningEngine().reason(diagnosis.issues)
+    if reasoning.enabled:
+        console.print(f"[magenta]LLM reasoning enabled: {reasoning.model} ({len(reasoning.proposals)} proposals)[/magenta]")
+        for proposal in reasoning.proposals[:5]:
+            if proposal.root_cause:
+                console.print(f"  [dim]{proposal.issue_id}: {proposal.root_cause}[/dim]")
+    elif reasoning.error:
+        console.print(f"[yellow]LLM reasoning unavailable; using deterministic repairs: {reasoning.error}[/yellow]")
+
+    patch_gen = PatchGenerator(fetcher, reasoning.proposals)
     patches = patch_gen.generate_all_patches(diagnosis.issues)
 
     if not patches:
@@ -212,6 +222,7 @@ def main():
     fix_p = subparsers.add_parser("fix", help="Diagnose, patch, and self-validate repository")
     fix_p.add_argument("target", help="Repository path or GitHub URL")
     fix_p.add_argument("--apply", action="store_true", help="Apply verified patches to disk")
+    fix_p.add_argument("--llm-model", help="Override REPO_DOCTOR_LLM_MODEL for this run")
 
     rep_p = subparsers.add_parser("report", help="Generate executive markdown/HTML engineering report")
     rep_p.add_argument("target", help="Repository path or GitHub URL")
@@ -221,6 +232,9 @@ def main():
     if args.command == "scan":
         scan_command(args.target)
     elif args.command == "fix":
+        if args.llm_model:
+            import os
+            os.environ["REPO_DOCTOR_LLM_MODEL"] = args.llm_model
         fix_command(args.target, apply_fixes=args.apply)
     elif args.command == "report":
         report_command(args.target, args.output)
