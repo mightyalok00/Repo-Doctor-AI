@@ -104,7 +104,48 @@ cd repo-doctor-ai
 pip install -e .
 ```
 
-### Validation Safety Note\nRepoDoctor uses a disposable copy of the target repository for validation. This protects the source tree from test/patch mutations, but it is **not an OS-level security sandbox**. Do not execute untrusted repositories on a privileged host; use a container or VM for hostile code.\n\n### 2. Launch Streamlit Web Dashboard
+### Validation Safety Note\nRepoDoctor uses a disposable copy of the target repository for validation. This protects the source tree from test/patch mutations, but it is **not an OS-level security sandbox**. Do not execute untrusted repositories on a privileged host; use a container or VM for hostile code.\n\n### LLM Reasoning Engine
+
+RepoDoctor keeps deterministic AST/static analysis as the source of truth and optionally adds a real LLM reasoning stage between diagnosis and repair:
+
+```
+AST / Static Analysis
+        ↓
+Evidence + Findings
+        ↓
+LLM Root-Cause Reasoning
+        ↓
+Conservative Patch Proposal
+        ↓
+Security / Safety Gates
+        ↓
+Disposable Validation
+        ↓
+Real Tests
+        ↓
+Verified Repair
+```
+
+The LLM is **bounded, evidence-grounded, and fail-safe**. It cannot turn a non-fixable finding into an auto-fixable one, and its proposed replacement is never written directly to the source repository. `PatchValidator` must pass before a repair can be applied.
+
+Configuration uses an OpenAI-compatible Chat Completions endpoint, so the same engine can work with local Ollama or remote providers:
+
+```bash
+# Local Ollama (no API key required)
+set REPO_DOCTOR_LLM_BASE_URL=http://localhost:11434/v1
+set REPO_DOCTOR_LLM_MODEL=qwen2.5-coder:7b
+
+# Remote provider
+set REPO_DOCTOR_LLM_BASE_URL=https://your-provider.example/v1
+set REPO_DOCTOR_LLM_API_KEY=your-key
+set REPO_DOCTOR_LLM_MODEL=your-model
+
+python -m src.cli fix examples/buggy_ml_repo
+```
+
+If no LLM is configured or the model is unavailable, RepoDoctor automatically falls back to its deterministic repair rules.
+
+### 2. Launch Streamlit Web Dashboard
 ```bash
 streamlit run app/streamlit_app.py
 ```
