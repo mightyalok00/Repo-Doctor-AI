@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)]()
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.33+-FF4B4B.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Self-Verifying AI](https://img.shields.io/badge/Sandbox-Self--Verifying-brightgreen)]()
+[![Validated Repair](https://img.shields.io/badge/Sandbox-Self--Verifying-brightgreen)]()
 
 ---
 
@@ -18,7 +18,7 @@ It automatically:
 - 🧪 **Specialized ML Doctor™** detects data leakage, train-test contamination, unstratified splits, and missing seeds
 - 🛡️ **Audits Dependencies & Security** (insecure deserialization, eval execution, unpinned versions)
 - 🔧 **Generates Exact Unified Patches** for identified code and configuration bugs
-- ⚙️ **Self-Verifying Sandbox Execution** runs pytest baseline vs post-patch checks to verify that tests pass before claiming success
+- ⚙️ **Disposable Workspace Validation** runs real baseline and post-patch pytest executions in a disposable validation workspace before marking a patch verified
 - 📈 **Repository Health Timeline** tracks continuous improvement across versions (e.g. `5.8 → 9.1`)
 - 📑 **Generates Recruiter-Ready Engineering Reports** in Markdown and HTML formats
 
@@ -104,7 +104,7 @@ cd repo-doctor-ai
 pip install -e .
 ```
 
-### 2. Launch Streamlit Web Dashboard
+### Validation Safety Note\nRepoDoctor uses a disposable copy of the target repository for validation. This protects the source tree from test/patch mutations, but it is **not an OS-level security sandbox**. Do not execute untrusted repositories on a privileged host; use a container or VM for hostile code.\n\n### 2. Launch Streamlit Web Dashboard
 ```bash
 streamlit run app/streamlit_app.py
 ```
