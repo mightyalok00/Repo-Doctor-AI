@@ -2,14 +2,11 @@
 Tests for Core Analyzers (Security, Code Quality, Dependencies, Documentation, Deployment).
 """
 
-import pytest
-from src.core.fetcher import RepositoryFetcher
-from src.analyzer.security import SecurityAnalyzer
+from src.ai.diagnosis import DiagnosisEngine
 from src.analyzer.code_quality import CodeQualityAnalyzer
 from src.analyzer.dependencies import DependencyAnalyzer
-from src.analyzer.documentation import DocumentationAnalyzer
-from src.analyzer.deployment import DeploymentAnalyzer
-from src.ai.diagnosis import DiagnosisEngine
+from src.analyzer.security import SecurityAnalyzer
+from src.core.fetcher import RepositoryFetcher
 
 
 def test_security_eval_detection():

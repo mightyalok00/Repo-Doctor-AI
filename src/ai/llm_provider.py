@@ -4,10 +4,10 @@ Supports local Ollama, OpenAI/Groq APIs, and deterministic AST rule synthesizer.
 """
 
 from __future__ import annotations
+
 import os
-import json
+
 import httpx
-from typing import Optional, Dict, Any
 
 
 class LLMProvider:

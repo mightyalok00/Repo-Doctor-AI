@@ -4,10 +4,7 @@ Generates Markdown and HTML executive diagnosis and verification reports.
 """
 
 from __future__ import annotations
-import json
-from pathlib import Path
-from datetime import datetime
-from typing import Optional
+
 from src.core.models import RepositoryDiagnosis, Severity, ValidationStatus
 
 
@@ -23,7 +20,7 @@ class ReportGenerator:
         sc = d.scorecard
 
         md = []
-        md.append(f"# 🩺 RepoDoctor AI - Engineering Health Report")
+        md.append("# 🩺 RepoDoctor AI - Engineering Health Report")
         md.append(f"**Repository:** `{d.repo_name}` | **Date:** {d.scan_timestamp.strftime('%Y-%m-%d %H:%M:%S UTC')}")
         md.append(f"**Overall Health Score:** `{sc.overall_score} / 10.0` (Grade: **{sc.grade}**)")
         md.append("")

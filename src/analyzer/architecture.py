@@ -4,12 +4,13 @@ Evaluates project structure, modularity, circular dependencies, god files, and l
 """
 
 from __future__ import annotations
+
 import ast
 import os
-from typing import List, Dict, Set
 from pathlib import Path
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class ArchitectureAnalyzer:
@@ -18,15 +19,15 @@ class ArchitectureAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         issues.extend(self._check_project_layout())
         issues.extend(self._check_god_files())
         issues.extend(self._check_circular_imports())
         issues.extend(self._check_package_init())
         return issues
 
-    def _check_project_layout(self) -> List[Issue]:
+    def _check_project_layout(self) -> list[Issue]:
         issues = []
         py_files = self.fetcher.get_python_files()
         if not py_files:
@@ -50,7 +51,7 @@ class ArchitectureAnalyzer:
             )
         return issues
 
-    def _check_god_files(self) -> List[Issue]:
+    def _check_god_files(self) -> list[Issue]:
         issues = []
         for pf in self.fetcher.get_python_files():
             # God file threshold: > 600 lines with high function/class count
@@ -73,9 +74,9 @@ class ArchitectureAnalyzer:
                 )
         return issues
 
-    def _check_package_init(self) -> List[Issue]:
+    def _check_package_init(self) -> list[Issue]:
         issues = []
-        dirs_with_py: Set[str] = set()
+        dirs_with_py: set[str] = set()
         for pf in self.fetcher.get_python_files():
             parent_dir = os.path.dirname(pf.relative_path)
             if parent_dir and parent_dir != "tests":
@@ -101,10 +102,10 @@ class ArchitectureAnalyzer:
                 )
         return issues
 
-    def _check_circular_imports(self) -> List[Issue]:
+    def _check_circular_imports(self) -> list[Issue]:
         issues = []
         # Build basic dependency graph from AST imports
-        import_graph: Dict[str, Set[str]] = {}
+        import_graph: dict[str, set[str]] = {}
         py_files = self.fetcher.get_python_files()
         file_modules = {Path(f.relative_path).stem: f.relative_path for f in py_files}
 

@@ -4,12 +4,12 @@ Synthesizes verified unified diffs and replacement code for detected issues.
 """
 
 from __future__ import annotations
+
 import re
-import ast
-from typing import List, Optional, Dict
-from src.core.models import Issue, Patch, Category
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepositoryFetcher
 from src.core.git_utils import generate_diff
+from src.core.models import Issue, Patch
 
 
 class PatchGenerator:
@@ -18,9 +18,9 @@ class PatchGenerator:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def generate_all_patches(self, issues: List[Issue]) -> List[Patch]:
+    def generate_all_patches(self, issues: list[Issue]) -> list[Patch]:
         """Generate patches for all auto-fixable issues."""
-        patches: List[Patch] = []
+        patches: list[Patch] = []
         for issue in issues:
             if not issue.auto_fixable:
                 continue
@@ -29,7 +29,7 @@ class PatchGenerator:
                 patches.append(patch)
         return patches
 
-    def generate_patch_for_issue(self, issue: Issue) -> Optional[Patch]:
+    def generate_patch_for_issue(self, issue: Issue) -> Patch | None:
         """Route to specific patch generator based on issue ID and category."""
         repo_file = self.fetcher.get_file(issue.file_path)
 
@@ -77,7 +77,7 @@ class PatchGenerator:
 
         return None
 
-    def _generate_missing_file_patch(self, issue: Issue) -> Optional[Patch]:
+    def _generate_missing_file_patch(self, issue: Issue) -> Patch | None:
         file_path = issue.file_path
         content = ""
 

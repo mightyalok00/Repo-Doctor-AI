@@ -4,10 +4,11 @@ Evaluates README structure, docstring coverage, usage instructions, and licensin
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List, Tuple
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class DocumentationAnalyzer:
@@ -16,14 +17,14 @@ class DocumentationAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         issues.extend(self._check_readme())
         issues.extend(self._check_docstrings())
         issues.extend(self._check_license())
         return issues
 
-    def _check_readme(self) -> List[Issue]:
+    def _check_readme(self) -> list[Issue]:
         issues = []
         readme_file = self.fetcher.get_file("README.md") or self.fetcher.get_file("readme.md")
         if not readme_file:
@@ -82,7 +83,7 @@ class DocumentationAnalyzer:
 
         return issues
 
-    def _check_docstrings(self) -> List[Issue]:
+    def _check_docstrings(self) -> list[Issue]:
         issues = []
         py_files = [f for f in self.fetcher.get_python_files() if not f.relative_path.startswith("tests/")]
         if not py_files:
@@ -121,7 +122,7 @@ class DocumentationAnalyzer:
 
         return issues
 
-    def _check_license(self) -> List[Issue]:
+    def _check_license(self) -> list[Issue]:
         issues = []
         license_files = ["LICENSE", "LICENSE.txt", "LICENSE.md", "UNLICENSE"]
         has_license = any(self.fetcher.get_file(lf) is not None for lf in license_files)

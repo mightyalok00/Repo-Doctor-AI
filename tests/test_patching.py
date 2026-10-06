@@ -2,12 +2,10 @@
 Tests for Autonomous Patch Generator and Sandbox Validator.
 """
 
-import pytest
-from src.core.fetcher import RepositoryFetcher
 from src.ai.diagnosis import DiagnosisEngine
 from src.ai.patch_generator import PatchGenerator
+from src.core.fetcher import RepositoryFetcher
 from src.sandbox.validator import PatchValidator
-from src.core.models import ValidationStatus
 
 
 def test_patch_generation_and_unified_diff():

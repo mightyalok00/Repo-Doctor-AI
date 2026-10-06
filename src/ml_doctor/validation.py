@@ -4,10 +4,11 @@ Audits random seed fixation, cross-validation discipline, and train/val/test spl
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepoFile, RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class ValidationAnalyzer:
@@ -23,8 +24,8 @@ class ValidationAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         for pf in self.fetcher.get_python_files():
             if not pf.ast_tree:
                 continue
@@ -32,7 +33,7 @@ class ValidationAnalyzer:
             issues.extend(self._check_missing_cv(pf))
         return issues
 
-    def _check_missing_random_state(self, pf: RepoFile) -> List[Issue]:
+    def _check_missing_random_state(self, pf: RepoFile) -> list[Issue]:
         """Detects calls to stochastic functions/estimators without explicit random_state/seed parameter."""
         issues = []
         for node in ast.walk(pf.ast_tree):
@@ -66,7 +67,7 @@ class ValidationAnalyzer:
                         )
         return issues
 
-    def _check_missing_cv(self, pf: RepoFile) -> List[Issue]:
+    def _check_missing_cv(self, pf: RepoFile) -> list[Issue]:
         """Detects machine learning scripts using a single train_test_split without cross-validation."""
         issues = []
         has_train_test_split = False

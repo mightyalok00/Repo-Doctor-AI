@@ -4,11 +4,12 @@ Performs AST and regex-based scanning for dangerous functions, SQL injection, se
 """
 
 from __future__ import annotations
+
 import ast
 import re
-from typing import List
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepoFile, RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class SecurityAnalyzer:
@@ -25,8 +26,8 @@ class SecurityAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         for pf in self.fetcher.get_python_files():
             issues.extend(self._scan_secrets(pf))
             if pf.ast_tree:
@@ -34,7 +35,7 @@ class SecurityAnalyzer:
                 issues.extend(self._scan_sql_injection(pf))
         return issues
 
-    def _scan_secrets(self, pf: RepoFile) -> List[Issue]:
+    def _scan_secrets(self, pf: RepoFile) -> list[Issue]:
         issues = []
         for idx, line in enumerate(pf.lines, start=1):
             # Skip test files containing dummy mock strings
@@ -61,7 +62,7 @@ class SecurityAnalyzer:
                     )
         return issues
 
-    def _scan_dangerous_ast_calls(self, pf: RepoFile) -> List[Issue]:
+    def _scan_dangerous_ast_calls(self, pf: RepoFile) -> list[Issue]:
         issues = []
         for node in ast.walk(pf.ast_tree):
             if isinstance(node, ast.Call):
@@ -129,7 +130,7 @@ class SecurityAnalyzer:
                             )
         return issues
 
-    def _scan_sql_injection(self, pf: RepoFile) -> List[Issue]:
+    def _scan_sql_injection(self, pf: RepoFile) -> list[Issue]:
         issues = []
         for node in ast.walk(pf.ast_tree):
             if isinstance(node, ast.JoinedStr):  # f-string

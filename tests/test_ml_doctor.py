@@ -2,12 +2,10 @@
 Tests for ML Doctor Analyzers (Leakage, Preprocessing, Validation, Metrics).
 """
 
-import pytest
 from src.core.fetcher import RepositoryFetcher
 from src.ml_doctor.leakage import LeakageAnalyzer
-from src.ml_doctor.validation import ValidationAnalyzer
 from src.ml_doctor.metrics import MetricsAnalyzer
-from src.ml_doctor.preprocessing import PreprocessingAnalyzer
+from src.ml_doctor.validation import ValidationAnalyzer
 
 
 def test_data_leakage_detection():

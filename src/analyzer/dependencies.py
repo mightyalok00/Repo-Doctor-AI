@@ -4,10 +4,11 @@ Audits requirements.txt, pyproject.toml, and setup.py for unpinned versions, out
 """
 
 from __future__ import annotations
+
 import re
-from typing import List, Dict, Tuple
-from src.core.models import Issue, Category, Severity
+
 from src.core.fetcher import RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class DependencyAnalyzer:
@@ -39,13 +40,13 @@ class DependencyAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         issues.extend(self._analyze_requirements_txt())
         issues.extend(self._check_missing_dependency_manifest())
         return issues
 
-    def _check_missing_dependency_manifest(self) -> List[Issue]:
+    def _check_missing_dependency_manifest(self) -> list[Issue]:
         issues = []
         manifests = ["requirements.txt", "pyproject.toml", "setup.py", "Pipfile", "environment.yml"]
         has_manifest = any(self.fetcher.get_file(m) is not None for m in manifests)
@@ -65,7 +66,7 @@ class DependencyAnalyzer:
             )
         return issues
 
-    def _analyze_requirements_txt(self) -> List[Issue]:
+    def _analyze_requirements_txt(self) -> list[Issue]:
         issues = []
         req_file = self.fetcher.get_file("requirements.txt")
         if not req_file:

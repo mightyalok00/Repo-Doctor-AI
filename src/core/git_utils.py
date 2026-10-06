@@ -3,10 +3,10 @@ RepoDoctor AI - Git Utilities and Diff Management
 """
 
 from __future__ import annotations
+
 import difflib
 import subprocess
 from pathlib import Path
-from typing import Optional, Tuple
 
 
 def generate_diff(original_text: str, new_text: str, file_path: str = "") -> str:

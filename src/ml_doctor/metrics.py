@@ -4,10 +4,11 @@ Detects missing stratification, metric-loss misalignment, and evaluation anti-pa
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepoFile, RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class MetricsAnalyzer:
@@ -21,8 +22,8 @@ class MetricsAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         for pf in self.fetcher.get_python_files():
             if not pf.ast_tree:
                 continue
@@ -30,7 +31,7 @@ class MetricsAnalyzer:
             issues.extend(self._check_imbalanced_accuracy(pf))
         return issues
 
-    def _check_missing_stratification(self, pf: RepoFile) -> List[Issue]:
+    def _check_missing_stratification(self, pf: RepoFile) -> list[Issue]:
         """Detects train_test_split without stratify=y when classification models are used."""
         issues = []
         # Check if file uses classification models
@@ -66,7 +67,7 @@ class MetricsAnalyzer:
                             )
         return issues
 
-    def _check_imbalanced_accuracy(self, pf: RepoFile) -> List[Issue]:
+    def _check_imbalanced_accuracy(self, pf: RepoFile) -> list[Issue]:
         """Flags sole reliance on raw accuracy_score for classification without precision/recall/F1/ROC-AUC."""
         issues = []
         has_accuracy = False

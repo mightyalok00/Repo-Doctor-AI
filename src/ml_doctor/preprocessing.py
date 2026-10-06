@@ -4,10 +4,11 @@ Audits pipeline encapsulation, transformer chaining, and feature scaling.
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List, Set
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepoFile, RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class PreprocessingAnalyzer:
@@ -22,8 +23,8 @@ class PreprocessingAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         for pf in self.fetcher.get_python_files():
             if not pf.ast_tree:
                 continue
@@ -31,7 +32,7 @@ class PreprocessingAnalyzer:
             issues.extend(self._check_unscaled_distance_models(pf))
         return issues
 
-    def _check_missing_pipeline(self, pf: RepoFile) -> List[Issue]:
+    def _check_missing_pipeline(self, pf: RepoFile) -> list[Issue]:
         """Detects sequential scaler.fit_transform() + model.fit() without using sklearn Pipeline."""
         issues = []
         for node in ast.walk(pf.ast_tree):
@@ -69,10 +70,10 @@ class PreprocessingAnalyzer:
                     )
         return issues
 
-    def _check_unscaled_distance_models(self, pf: RepoFile) -> List[Issue]:
+    def _check_unscaled_distance_models(self, pf: RepoFile) -> list[Issue]:
         """Detects usage of distance/gradient sensitive models where no scaler or normalizer is imported or used."""
         issues = []
-        found_models: Set[str] = set()
+        found_models: set[str] = set()
         has_scaler = False
 
         for node in ast.walk(pf.ast_tree):

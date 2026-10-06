@@ -4,22 +4,27 @@ Coordinates all static & ML analyzers, synthesizes findings, and calculates cali
 """
 
 from __future__ import annotations
-from typing import List, Dict
-from src.core.models import (
-    Issue, Severity, Category, CategoryScore, RepositoryScorecard, RepositoryDiagnosis
-)
-from src.core.fetcher import RepositoryFetcher
+
 from src.analyzer.architecture import ArchitectureAnalyzer
 from src.analyzer.code_quality import CodeQualityAnalyzer
 from src.analyzer.dependencies import DependencyAnalyzer
+from src.analyzer.deployment import DeploymentAnalyzer
+from src.analyzer.documentation import DocumentationAnalyzer
 from src.analyzer.security import SecurityAnalyzer
 from src.analyzer.testing import TestingAnalyzer
-from src.analyzer.documentation import DocumentationAnalyzer
-from src.analyzer.deployment import DeploymentAnalyzer
+from src.core.fetcher import RepositoryFetcher
+from src.core.models import (
+    Category,
+    CategoryScore,
+    Issue,
+    RepositoryDiagnosis,
+    RepositoryScorecard,
+    Severity,
+)
 from src.ml_doctor.leakage import LeakageAnalyzer
+from src.ml_doctor.metrics import MetricsAnalyzer
 from src.ml_doctor.preprocessing import PreprocessingAnalyzer
 from src.ml_doctor.validation import ValidationAnalyzer
-from src.ml_doctor.metrics import MetricsAnalyzer
 
 
 class DiagnosisEngine:
@@ -49,7 +54,7 @@ class DiagnosisEngine:
 
     def run_full_diagnosis(self) -> RepositoryDiagnosis:
         """Run all analyzers and aggregate findings into a complete repository diagnosis."""
-        all_issues: List[Issue] = []
+        all_issues: list[Issue] = []
 
         analyzers = [
             ArchitectureAnalyzer(self.fetcher),
@@ -69,7 +74,7 @@ class DiagnosisEngine:
             try:
                 issues = analyzer.analyze()
                 all_issues.extend(issues)
-            except Exception as e:
+            except Exception:
                 # Keep diagnosing even if a specific sub-analyzer hits an edge case
                 pass
 
@@ -97,16 +102,16 @@ class DiagnosisEngine:
             executive_summary=summary
         )
 
-    def _compute_scorecard(self, issues: List[Issue]) -> RepositoryScorecard:
+    def _compute_scorecard(self, issues: list[Issue]) -> RepositoryScorecard:
         # Group issues by category
-        cat_issues: Dict[str, List[Issue]] = {c.value: [] for c in Category}
+        cat_issues: dict[str, list[Issue]] = {c.value: [] for c in Category}
         for issue in issues:
             cat_val = issue.category.value if isinstance(issue.category, Category) else str(issue.category)
             if cat_val in cat_issues:
                 cat_issues[cat_val].append(issue)
 
-        breakdown: List[CategoryScore] = []
-        category_scores: Dict[str, float] = {}
+        breakdown: list[CategoryScore] = []
+        category_scores: dict[str, float] = {}
 
         for cat in Category:
             c_val = cat.value
@@ -152,7 +157,7 @@ class DiagnosisEngine:
             grade=grade
         )
 
-    def _generate_executive_summary(self, scorecard: RepositoryScorecard, issues: List[Issue]) -> str:
+    def _generate_executive_summary(self, scorecard: RepositoryScorecard, issues: list[Issue]) -> str:
         crit_issues = [i for i in issues if i.severity == Severity.CRITICAL]
         high_issues = [i for i in issues if i.severity == Severity.HIGH]
 

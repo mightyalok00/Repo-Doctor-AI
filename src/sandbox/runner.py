@@ -4,13 +4,14 @@ Executes tests, syntax validation, and import checks inside temporary isolated e
 """
 
 from __future__ import annotations
+
 import os
-import sys
 import shutil
-import tempfile
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
-from typing import Dict, Any, Tuple, Optional
+from typing import Any
 
 
 class SandboxRunner:
@@ -18,7 +19,7 @@ class SandboxRunner:
 
     def __init__(self, source_repo_path: Path):
         self.source_repo_path = source_repo_path.resolve()
-        self.sandbox_dir: Optional[Path] = None
+        self.sandbox_dir: Path | None = None
 
     def setup_sandbox(self) -> Path:
         """Create a fresh temporary sandbox copy of the repository."""
@@ -32,7 +33,7 @@ class SandboxRunner:
         shutil.copytree(self.source_repo_path, self.sandbox_dir, dirs_exist_ok=True, ignore=ignore_patterns)
         return self.sandbox_dir
 
-    def run_syntax_check(self) -> Tuple[bool, str]:
+    def run_syntax_check(self) -> tuple[bool, str]:
         """Verify Python syntax across all .py files in sandbox."""
         if not self.sandbox_dir:
             return False, "Sandbox not initialized"
@@ -46,13 +47,13 @@ class SandboxRunner:
             except SyntaxError as e:
                 errors.append(f"{py_file.name}:{e.lineno} - {e.msg}")
             except Exception as e:
-                errors.append(f"{py_file.name} - {str(e)}")
+                errors.append(f"{py_file.name} - {e!s}")
 
         if errors:
             return False, "\n".join(errors)
         return True, "All Python files compiled successfully."
 
-    def run_tests(self, timeout_sec: int = 10) -> Dict[str, Any]:
+    def run_tests(self, timeout_sec: int = 10) -> dict[str, Any]:
         """Execute pytest in the sandbox environment and parse results."""
         if not self.sandbox_dir:
             return {"passed": 0, "failed": 0, "errors": 0, "output": "Sandbox not initialized", "success": False}
@@ -128,7 +129,7 @@ class SandboxRunner:
                 "passed": 0,
                 "failed": 1,
                 "errors": 1,
-                "output": f"Failed to execute pytest: {str(e)}",
+                "output": f"Failed to execute pytest: {e!s}",
                 "success": False
             }
 

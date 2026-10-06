@@ -3,18 +3,19 @@ RepoDoctor AI - Repository Health Timeline Store
 """
 
 from __future__ import annotations
+
 import json
 import sqlite3
-from pathlib import Path
-from typing import List, Optional, Dict
 from datetime import datetime
+from pathlib import Path
+
 from src.core.models import TimelineEntry
 
 
 class HealthTimelineStore:
     """Stores and retrieves repository health history over iterations (v1, v2, v3, ...)."""
 
-    def __init__(self, db_path: Optional[Path] = None):
+    def __init__(self, db_path: Path | None = None):
         if db_path is None:
             # Default to local user home or cache dir
             base_dir = Path.home() / ".repodoctor"
@@ -48,7 +49,7 @@ class HealthTimelineStore:
         self,
         repo_identifier: str,
         overall_score: float,
-        category_scores: Dict[str, float],
+        category_scores: dict[str, float],
         total_issues: int,
         fixes_applied: int = 0,
         description: str = ""
@@ -89,9 +90,9 @@ class HealthTimelineStore:
             description=description
         )
 
-    def get_timeline(self, repo_identifier: str) -> List[TimelineEntry]:
+    def get_timeline(self, repo_identifier: str) -> list[TimelineEntry]:
         """Fetch all historical timeline entries for a repository."""
-        entries: List[TimelineEntry] = []
+        entries: list[TimelineEntry] = []
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""

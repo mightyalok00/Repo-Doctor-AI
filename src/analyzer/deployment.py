@@ -4,9 +4,9 @@ Audits GitHub Actions workflows, Dockerfile best practices, docker-compose, and 
 """
 
 from __future__ import annotations
-from typing import List
-from src.core.models import Issue, Category, Severity
+
 from src.core.fetcher import RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class DeploymentAnalyzer:
@@ -15,14 +15,14 @@ class DeploymentAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         issues.extend(self._check_cicd_workflows())
         issues.extend(self._check_dockerfile())
         issues.extend(self._check_gitignore())
         return issues
 
-    def _check_cicd_workflows(self) -> List[Issue]:
+    def _check_cicd_workflows(self) -> list[Issue]:
         issues = []
         workflow_files = [f for f in self.fetcher.files.keys() if f.startswith(".github/workflows/") and (f.endswith(".yml") or f.endswith(".yaml"))]
         if not workflow_files:
@@ -42,7 +42,7 @@ class DeploymentAnalyzer:
             )
         return issues
 
-    def _check_dockerfile(self) -> List[Issue]:
+    def _check_dockerfile(self) -> list[Issue]:
         issues = []
         dockerfile = self.fetcher.get_file("Dockerfile") or self.fetcher.get_file("docker/Dockerfile")
         if not dockerfile:
@@ -80,7 +80,7 @@ class DeploymentAnalyzer:
                 )
         return issues
 
-    def _check_gitignore(self) -> List[Issue]:
+    def _check_gitignore(self) -> list[Issue]:
         issues = []
         gitignore = self.fetcher.get_file(".gitignore")
         if not gitignore:

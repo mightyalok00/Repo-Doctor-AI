@@ -4,9 +4,9 @@ Provides rich interactive terminal commands for scanning, diagnosing, and repair
 """
 
 from __future__ import annotations
-import sys
-import os
+
 import argparse
+import sys
 from pathlib import Path
 
 # Force UTF-8 stdout encoding for Windows console compatibility
@@ -18,20 +18,20 @@ if sys.platform == "win32":
         pass
 
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
 from rich.syntax import Syntax
+from rich.table import Table
 
 console = Console(force_terminal=True, legacy_windows=False)
 
-from src.core.fetcher import RepositoryFetcher
 from src.ai.diagnosis import DiagnosisEngine
 from src.ai.patch_generator import PatchGenerator
-from src.sandbox.validator import PatchValidator
-from src.core.history_store import HealthTimelineStore
-from src.report.generator import ReportGenerator
+from src.core.fetcher import RepositoryFetcher
 from src.core.git_utils import apply_patch_to_file
+from src.core.history_store import HealthTimelineStore
 from src.core.models import Severity
+from src.report.generator import ReportGenerator
+from src.sandbox.validator import PatchValidator
 
 
 def render_banner():

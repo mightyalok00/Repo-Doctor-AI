@@ -4,10 +4,11 @@ Evaluates AST patterns, swallowed exceptions, mutable defaults, complexity, and 
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List, Optional
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepoFile, RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class CyclomaticComplexityVisitor(ast.NodeVisitor):
@@ -53,8 +54,8 @@ class CodeQualityAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         for pf in self.fetcher.get_python_files():
             if not pf.ast_tree:
                 continue
@@ -64,13 +65,13 @@ class CodeQualityAnalyzer:
             issues.extend(self._check_type_hints(pf))
         return issues
 
-    def _get_snippet(self, pf: RepoFile, start_line: int, end_line: Optional[int] = None) -> str:
+    def _get_snippet(self, pf: RepoFile, start_line: int, end_line: int | None = None) -> str:
         end = end_line or start_line
         if 1 <= start_line <= len(pf.lines):
             return "\n".join(pf.lines[start_line - 1: min(end, len(pf.lines))])
         return ""
 
-    def _check_swallowed_exceptions(self, pf: RepoFile) -> List[Issue]:
+    def _check_swallowed_exceptions(self, pf: RepoFile) -> list[Issue]:
         issues = []
         for node in ast.walk(pf.ast_tree):
             if isinstance(node, ast.ExceptHandler):
@@ -100,7 +101,7 @@ class CodeQualityAnalyzer:
                     )
         return issues
 
-    def _check_mutable_defaults(self, pf: RepoFile) -> List[Issue]:
+    def _check_mutable_defaults(self, pf: RepoFile) -> list[Issue]:
         issues = []
         for node in ast.walk(pf.ast_tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -118,7 +119,7 @@ class CodeQualityAnalyzer:
                                 line_number=line,
                                 code_snippet=snippet,
                                 risk_explanation="Default argument is instantiated once at function definition time. Mutations inside the function persist across calls, causing subtle shared state bugs.",
-                                recommendation=f"Use 'None' as default value (e.g., arg: Optional[list] = None) and initialize inside the function body.",
+                                recommendation="Use 'None' as default value (e.g., arg: Optional[list] = None) and initialize inside the function body.",
                                 confidence=0.99,
                                 auto_fixable=True,
                                 metadata={"func_name": node.name}
@@ -126,7 +127,7 @@ class CodeQualityAnalyzer:
                         )
         return issues
 
-    def _check_function_complexity(self, pf: RepoFile) -> List[Issue]:
+    def _check_function_complexity(self, pf: RepoFile) -> list[Issue]:
         issues = []
         for node in ast.walk(pf.ast_tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -151,7 +152,7 @@ class CodeQualityAnalyzer:
                     )
         return issues
 
-    def _check_type_hints(self, pf: RepoFile) -> List[Issue]:
+    def _check_type_hints(self, pf: RepoFile) -> list[Issue]:
         issues = []
         if pf.relative_path.startswith("tests/") or pf.relative_path.startswith("test_"):
             return issues

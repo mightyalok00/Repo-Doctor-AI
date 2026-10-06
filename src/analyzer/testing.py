@@ -4,10 +4,11 @@ Audits test coverage, test-to-code ratio, missing unit tests, and assertion heal
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List, Set
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class TestingAnalyzer:
@@ -16,8 +17,8 @@ class TestingAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         py_files = self.fetcher.get_python_files()
         if not py_files:
             return issues

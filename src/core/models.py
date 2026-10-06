@@ -3,10 +3,12 @@ RepoDoctor AI - Core Data Models and Schemas
 """
 
 from __future__ import annotations
-from enum import Enum
-from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field
+
 from datetime import datetime
+from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel, Field
 
 
 class Severity(str, Enum):
@@ -34,14 +36,14 @@ class Issue(BaseModel):
     title: str = Field(..., description="Short descriptive title")
     severity: Severity = Field(..., description="Risk severity level")
     file_path: str = Field(..., description="Relative file path where issue was found")
-    line_number: Optional[int] = Field(None, description="Starting line number")
-    end_line_number: Optional[int] = Field(None, description="Ending line number")
-    code_snippet: Optional[str] = Field(None, description="Current problematic code snippet")
+    line_number: int | None = Field(None, description="Starting line number")
+    end_line_number: int | None = Field(None, description="Ending line number")
+    code_snippet: str | None = Field(None, description="Current problematic code snippet")
     risk_explanation: str = Field(..., description="Why this is a risk / anti-pattern")
     recommendation: str = Field(..., description="Recommended fix or best practice")
     confidence: float = Field(default=0.95, ge=0.0, le=1.0, description="Confidence score (0.0 to 1.0)")
     auto_fixable: bool = Field(default=True, description="Whether automated patch generation is available")
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class Patch(BaseModel):
@@ -79,7 +81,7 @@ class ValidationResult(BaseModel):
     tests_passed_after: int = 0
     tests_failed_after: int = 0
     test_output: str = ""
-    steps: List[ValidationStep] = Field(default_factory=list)
+    steps: list[ValidationStep] = Field(default_factory=list)
     confidence: float = 0.95
 
 
@@ -93,8 +95,8 @@ class CategoryScore(BaseModel):
 
 class RepositoryScorecard(BaseModel):
     overall_score: float = Field(..., ge=0.0, le=10.0)
-    category_scores: Dict[str, float] = Field(default_factory=dict)
-    breakdown: List[CategoryScore] = Field(default_factory=list)
+    category_scores: dict[str, float] = Field(default_factory=dict)
+    breakdown: list[CategoryScore] = Field(default_factory=list)
     total_issues: int = 0
     critical_issues: int = 0
     high_issues: int = 0
@@ -107,7 +109,7 @@ class TimelineEntry(BaseModel):
     version: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     overall_score: float
-    category_scores: Dict[str, float]
+    category_scores: dict[str, float]
     total_issues: int
     fixes_applied: int
     description: str
@@ -121,8 +123,8 @@ class RepositoryDiagnosis(BaseModel):
     python_files: int = 0
     total_loc: int = 0
     scorecard: RepositoryScorecard
-    issues: List[Issue] = Field(default_factory=list)
-    patches: List[Patch] = Field(default_factory=list)
-    validation_results: List[ValidationResult] = Field(default_factory=list)
-    health_timeline: List[TimelineEntry] = Field(default_factory=list)
+    issues: list[Issue] = Field(default_factory=list)
+    patches: list[Patch] = Field(default_factory=list)
+    validation_results: list[ValidationResult] = Field(default_factory=list)
+    health_timeline: list[TimelineEntry] = Field(default_factory=list)
     executive_summary: str = ""

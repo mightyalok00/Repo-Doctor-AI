@@ -4,10 +4,11 @@ Detects pre-split fitting, target leakage, and train/test contamination anti-pat
 """
 
 from __future__ import annotations
+
 import ast
-from typing import List, Dict, Set, Tuple
-from src.core.models import Issue, Category, Severity
-from src.core.fetcher import RepositoryFetcher, RepoFile
+
+from src.core.fetcher import RepoFile, RepositoryFetcher
+from src.core.models import Category, Issue, Severity
 
 
 class LeakageAnalyzer:
@@ -22,8 +23,8 @@ class LeakageAnalyzer:
     def __init__(self, fetcher: RepositoryFetcher):
         self.fetcher = fetcher
 
-    def analyze(self) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self) -> list[Issue]:
+        issues: list[Issue] = []
         for pf in self.fetcher.get_python_files():
             if not pf.ast_tree:
                 continue
@@ -31,7 +32,7 @@ class LeakageAnalyzer:
             issues.extend(self._check_fit_on_test_data(pf))
         return issues
 
-    def _check_fit_before_split(self, pf: RepoFile) -> List[Issue]:
+    def _check_fit_before_split(self, pf: RepoFile) -> list[Issue]:
         """
         Detects cases where a transformer (e.g. StandardScaler) has .fit() or .fit_transform()
         called on full dataset (X or df) BEFORE train_test_split() is called.
@@ -41,7 +42,7 @@ class LeakageAnalyzer:
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Module)):
                 body_nodes = getattr(node, "body", [])
                 
-                fit_calls: List[Tuple[int, str, str]] = [] # (line_number, transformer_name, call_snippet)
+                fit_calls: list[tuple[int, str, str]] = [] # (line_number, transformer_name, call_snippet)
                 split_line = None
 
                 for item in body_nodes:
@@ -82,7 +83,7 @@ class LeakageAnalyzer:
                             )
         return issues
 
-    def _check_fit_on_test_data(self, pf: RepoFile) -> List[Issue]:
+    def _check_fit_on_test_data(self, pf: RepoFile) -> list[Issue]:
         """Detects scaler.fit() or scaler.fit_transform() directly invoked on test sets (X_test, test_df)."""
         issues = []
         for node in ast.walk(pf.ast_tree):

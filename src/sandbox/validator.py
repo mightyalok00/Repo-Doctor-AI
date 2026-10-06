@@ -4,12 +4,13 @@ Runs automated pre-patch vs post-patch validation in sandboxed environments.
 """
 
 from __future__ import annotations
+
 import time
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+
+from src.core.git_utils import apply_patch_to_file
 from src.core.models import Patch, ValidationResult, ValidationStatus, ValidationStep
 from src.sandbox.runner import SandboxRunner
-from src.core.git_utils import apply_patch_to_file
 
 
 class PatchValidator:
@@ -23,12 +24,12 @@ class PatchValidator:
         results = self.validate_all_patches([patch])
         return results[0]
 
-    def validate_all_patches(self, patches: List[Patch]) -> List[ValidationResult]:
+    def validate_all_patches(self, patches: list[Patch]) -> list[ValidationResult]:
         """Validate all candidate patches efficiently in a sandbox."""
         if not patches:
             return []
 
-        results: List[ValidationResult] = []
+        results: list[ValidationResult] = []
         runner = SandboxRunner(self.repo_path)
 
         try:
@@ -41,7 +42,7 @@ class PatchValidator:
 
             # Apply all patches into sandbox
             for patch in patches:
-                steps: List[ValidationStep] = [
+                steps: list[ValidationStep] = [
                     ValidationStep(
                         name="Baseline Test Execution",
                         status=ValidationStatus.PASSED if pre_test_res["success"] else ValidationStatus.WARNING,

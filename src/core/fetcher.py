@@ -3,13 +3,13 @@ RepoDoctor AI - Repository Fetcher and File Scanner
 """
 
 from __future__ import annotations
-import os
+
 import ast
+import os
+import shutil
 import subprocess
 import tempfile
-import shutil
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
 
 class RepoFile:
@@ -18,8 +18,8 @@ class RepoFile:
         self.full_path = full_path
         self.content = content
         self.is_python = is_python
-        self.ast_tree: Optional[ast.AST] = None
-        self.lines: List[str] = content.splitlines()
+        self.ast_tree: ast.AST | None = None
+        self.lines: list[str] = content.splitlines()
         self.loc: int = len(self.lines)
 
         if is_python:
@@ -52,10 +52,10 @@ class RepositoryFetcher:
         """
         self.target = target.strip()
         self.is_url = self.target.startswith("http://") or self.target.startswith("https://") or self.target.startswith("git@")
-        self.temp_dir: Optional[str] = None
+        self.temp_dir: str | None = None
         self.repo_path: Path = Path(".")
         self.repo_name: str = ""
-        self.files: Dict[str, RepoFile] = {}
+        self.files: dict[str, RepoFile] = {}
 
     def fetch(self) -> Path:
         """Fetch/prepare the repository directory."""
@@ -73,7 +73,7 @@ class RepositoryFetcher:
                 self.repo_path = clone_target
             except Exception as e:
                 # If git clone fails, raise clear exception
-                raise RuntimeError(f"Failed to clone repository from {self.target}: {str(e)}")
+                raise RuntimeError(f"Failed to clone repository from {self.target}: {e!s}")
         else:
             local_path = Path(self.target).resolve()
             if not local_path.exists() or not local_path.is_dir():
@@ -121,10 +121,10 @@ class RepositoryFetcher:
                 except Exception:
                     continue
 
-    def get_python_files(self) -> List[RepoFile]:
+    def get_python_files(self) -> list[RepoFile]:
         return [f for f in self.files.values() if f.is_python]
 
-    def get_file(self, rel_path: str) -> Optional[RepoFile]:
+    def get_file(self, rel_path: str) -> RepoFile | None:
         norm_path = rel_path.replace("\\", "/")
         return self.files.get(norm_path)
 
