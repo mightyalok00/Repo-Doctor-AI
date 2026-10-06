@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo-doctor-ai"
+version = "1.0.0"
+description = "An AI-powered autonomous engineer that diagnoses, scores, and repairs GitHub repositories."
+authors = [{ name = "RepoDoctor Team" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.29.0",
+    "pydantic>=2.6.0",
+    "streamlit>=1.33.0",
+    "plotly>=5.20.0",
+    "rich>=13.7.1",
+    "pytest>=8.1.0",
+    "httpx>=0.27.0",
+    "pandas>=2.2.0",
+    "scikit-learn>=1.4.0",
+    "jinja2>=3.1.3"
+]
+
+[project.scripts]
+repo-doctor = "src.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
